@@ -1,0 +1,20 @@
+name: config
+description: determine the parameters for build and deploy
+
+outputs:
+  namespace:
+    description: namespace to deploy
+    value: ${{ steps.run.outputs.namespace }}
+  overlay:
+    description: overlay name to run kustomize build
+    value: ${{ steps.run.outputs.overlay }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/github-script@v5
+      id: run
+      with:
+        script: |
+          const script = require('./.github/actions/deploy-config/run.js')
+          script({ github, context, core })
