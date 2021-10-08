@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pr-1--backend
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: monorepo-deploy-actions-demo
+  source:
+    repoURL: https://github.com/quipper/monorepo-deploy-actions-demo.git
+    targetRevision: ns/monorepo-deploy-actions-demo/pr/pr-1
+    path: services/backend
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: pr-1
+  syncPolicy:
+    automated:
+      prune: true
