@@ -23,10 +23,11 @@ spec:
         app: backend
     spec:
       containers:
-      - env:
-        - name: DATABASE_URL
-          valueFrom:
-            configMapKeyRef:
-              key: database.url
-              name: backend-9bfbtcfkh4
-        image: ghcr.io/quipper/monorepo-deploy-actions-demo/backend@sha256:d44515cee88d1ad886e7000d7bef83d560bdbe3d65a19a2f9ac75da7b04189f0
+      - image: ghcr.io/quipper/monorepo-deploy-actions-demo/backend@sha256:dad73b30e0aa3759bb2c7bbdb77c65aec9cf8ea3ab21b29a8aa47f24152540fd
+        volumeMounts:
+        - mountPath: /app/config
+          name: config
+      volumes:
+      - configMap:
+          name: backend-9bfbtcfkh4
+        name: config
