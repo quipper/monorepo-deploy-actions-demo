@@ -14,4 +14,4 @@ spec:
         app: backend
     spec:
       containers:
-      - image: ghcr.io/quipper/monorepo-deploy-actions-demo/backend@sha256:1806212f2626e00993e6772fb3e4e8a9f1a618136b5e3f6f793203cfa06c1ea8
+      - image: ghcr.io/quipper/monorepo-deploy-actions-demo/backend@sha256:7206e08e93622249753444ed62588d624d04cff511e9e213e38268bb2943b76f
