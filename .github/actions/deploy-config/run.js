@@ -2,8 +2,7 @@ module.exports = ({ github, context, core }) => {
   core.info(`Received event ${context.eventName} at ref ${context.ref}`)
   const outputs = determineConfig(context)
   core.info(`Set outputs to ${JSON.stringify(outputs, undefined, 2)}`)
-  core.setOutput('overlay', outputs.overlay)
-  core.setOutput('namespace', outputs.namespace)
+  core.setOutput('environments', JSON.stringify(outputs.environments))
 }
 
 const determineConfig = (context) => {
@@ -11,15 +10,23 @@ const determineConfig = (context) => {
 
   if (eventName === 'pull_request') {
     return {
-      overlay: `pr`,
-      namespace: `pr-${context.issue.number}`,
+      environments: [
+        {
+          overlay: `pr`,
+          namespace: `pr-${context.issue.number}`,
+        },
+      ],
     }
   }
 
   if (eventName === 'push' && ref === 'refs/heads/main') {
     return {
-      overlay: `development`,
-      namespace: `development`,
+      environments: [
+        {
+          overlay: `development`,
+          namespace: `development`,
+        },
+      ],
     }
   }
 
