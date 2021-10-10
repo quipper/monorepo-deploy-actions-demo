@@ -1,0 +1,54 @@
+name: git-push-manifest
+
+on:
+  workflow_call:
+    inputs:
+      microservice:
+        required: true
+        type: string
+      kubernetes-directory:
+        required: true
+        type: string
+      substitute:
+        required: true
+        type: string
+
+jobs:
+  config:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.config.outputs.environments }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/deploy-config
+        id: config
+
+  manifest:
+    needs:
+      - config
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJSON(needs.config.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: int128/kustomize-action@v1
+        id: kustomize
+        with:
+          kustomization: ${{ inputs.kubernetes-directory }}/overlays/${{ matrix.config.overlay }}/kustomization.yaml
+      - uses: quipper/monorepo-deploy-actions/substitute@v1
+        with:
+          files: ${{ steps.kustomize.outputs.directory }}/**/*.yaml
+          variables: |
+            NAMESPACE=${{ matrix.config.namespace }}
+            ${{ inputs.substitute }}
+      - uses: quipper/monorepo-deploy-actions/git-push-service@v1
+        with:
+          manifests: ${{ steps.kustomize.outputs.directory }}/**/*.yaml
+          overlay: ${{ matrix.config.overlay }}
+          namespace: ${{ matrix.config.namespace }}
+          service: ${{ inputs.microservice }}
+          destination-repository: ${{ github.repository }}
