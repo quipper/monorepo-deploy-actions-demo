@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: pr-6
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - image: ghcr.io/quipper/monorepo-deploy-actions-demo/backend@sha256:97477638b353f35143e790dd4391916572bc93d703dd583867e33fb23e5690b5
