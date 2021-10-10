@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      image: ghcr.io/${{ github.repository }}/${{ env.microservice }}@${{ steps.build.outputs.image }}
+      image: ghcr.io/${{ github.repository }}/${{ env.microservice }}@${{ steps.build.outputs.digest }}
     steps:
       - uses: actions/checkout@v2
       - uses: docker/metadata-action@v3
@@ -48,15 +48,28 @@ jobs:
           cache-from: ${{ steps.cache.outputs.cache-from }}
           cache-to: ${{ steps.cache.outputs.cache-to }}
 
-  manifest:
-    needs:
-      - docker
+  config:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.config.outputs.environments }}
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deploy-config
         id: config
+
+  manifest:
+    needs:
+      - docker
+      - config
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJSON(needs.config.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
       - uses: int128/kustomize-action@v1
         id: kustomize
         with:
@@ -65,11 +78,12 @@ jobs:
         with:
           files: ${{ steps.kustomize.outputs.directory }}/**/*.yaml
           variables: |
-            NAMESPACE=${{ steps.config.outputs.namespace }}
+            NAMESPACE=${{ matrix.config.namespace }}
+            DOCKER_IMAGE=${{ needs.docker.outputs.image }}
       - uses: quipper/monorepo-deploy-actions/git-push-service@v1
         with:
           manifests: ${{ steps.kustomize.outputs.directory }}/**/*.yaml
-          overlay: ${{ steps.config.outputs.overlay }}
-          namespace: ${{ steps.config.outputs.namespace }}
+          overlay: ${{ matrix.config.overlay }}
+          namespace: ${{ matrix.config.namespace }}
           service: ${{ env.microservice }}
           destination-repository: ${{ github.repository }}
