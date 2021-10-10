@@ -15,6 +15,11 @@ const determineConfig = (context) => {
           overlay: `pr`,
           namespace: `pr-${context.issue.number}`,
         },
+        // DONT MERGE: EXPERIMENTAL: prebuilt manifest for pull requests
+        {
+          overlay: `pr`,
+          namespace: '${NAMESPACE}',
+        },
       ],
     }
   }

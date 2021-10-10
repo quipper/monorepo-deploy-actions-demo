@@ -4,10 +4,12 @@ on:
   pull_request:
     paths:
       - .github/workflows/backend--deploy.yaml
+      - .github/actions/deploy-config/**
       - backend/**
   push:
     paths:
       - .github/workflows/backend--deploy.yaml
+      - .github/actions/deploy-config/**
       - backend/**
     branches:
       - main
