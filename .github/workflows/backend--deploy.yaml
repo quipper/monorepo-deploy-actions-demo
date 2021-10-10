@@ -73,7 +73,7 @@ jobs:
       - uses: int128/kustomize-action@v1
         id: kustomize
         with:
-          kustomization: backend/kubernetes/overlays/${{ steps.config.outputs.overlay }}/kustomization.yaml
+          kustomization: backend/kubernetes/overlays/${{ matrix.config.overlay }}/kustomization.yaml
       - uses: quipper/monorepo-deploy-actions/substitute@v1
         with:
           files: ${{ steps.kustomize.outputs.directory }}/**/*.yaml
