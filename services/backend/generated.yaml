@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: ${NAMESPACE}
+  namespace: pr-3
 spec:
   replicas: 1
   selector:
@@ -14,4 +14,4 @@ spec:
         app: backend
     spec:
       containers:
-      - image: ${DOCKER_IMAGE}
+      - image: ghcr.io/quipper/monorepo-deploy-actions-demo/backend@sha256:c1b83af487f5f2469aaf38541d86c2356c8b48760686925e2cf94fa43b0784d3
