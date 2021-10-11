@@ -26,6 +26,11 @@ const determineConfig = (context) => {
           overlay: `development`,
           namespace: `development`,
         },
+        {
+          overlay: `pr`,
+          namespace: '${NAMESPACE}', // will be replaced on pull-request--deploy workflow
+          prebuilt: true,
+        },
       ],
     }
   }

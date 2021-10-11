@@ -68,3 +68,5 @@ jobs:
           namespace: ${{ matrix.config.namespace }}
           service: ${{ env.microservice }}
           destination-repository: ${{ github.repository }}
+          transient: ${{ github.event_name == 'pull_request' }}
+          prebuilt: ${{ matrix.config.prebuilt == true }}
