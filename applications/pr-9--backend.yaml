@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/quipper/monorepo-deploy-actions-demo.git
     targetRevision: ns/monorepo-deploy-actions-demo/pr/pr-9
-    path: sha/990d326913f238d1365dad583107f25e223a2b1b/services/backend
+    path: sha/ffde5d4e9f27a3cdb30441fbc2b46f50100d21b6/services/backend
   destination:
     server: https://kubernetes.default.svc
     namespace: pr-9
