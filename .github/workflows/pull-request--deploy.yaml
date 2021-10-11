@@ -1,0 +1,55 @@
+name: pull-request--deploy
+
+on:
+  pull_request:
+
+jobs:
+  bootstrap-with-prebuilt-manifests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/github-script@v5
+        id: config
+        with:
+          script: |
+            core.setOutput('namespace', `pr-${context.issue.number}`)
+
+      # push services using prebuilt manifests
+      - uses: actions/checkout@v2
+        with:
+          ref: ns/monorepo-deploy-actions-demo/pr/prebuilt/refs/heads/main
+          path: prebuilt
+      - uses: quipper/monorepo-deploy-actions/substitute@v1
+        with:
+          files: prebuilt/services/**/*.yaml
+          variables: NAMESPACE=${{ steps.config.outputs.namespace }}
+      - uses: quipper/monorepo-deploy-actions/git-push-service@v1
+        with:
+          manifests: prebuilt/services/**/*.yaml
+          manifests-pattern: ${{ github.workspace }}/prebuilt/services/${service}/**
+          overlay: pr
+          namespace: ${{ steps.config.outputs.namespace }}
+          destination-repository: ${{ github.repository }}
+          overwrite: false # use prebuilt manifests only if not yet deployed
+          transient: true
+
+      # push namespace Application resource
+      - uses: quipper/monorepo-deploy-actions/git-push-namespace@v1
+        with:
+          overlay: pr
+          namespace: ${{ steps.config.outputs.namespace }}
+          destination-repository: ${{ github.repository }}
+          destination-branch: generated-manifests
+
+      # notify
+      - name: Add deploy label
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['deploy']
+            })
