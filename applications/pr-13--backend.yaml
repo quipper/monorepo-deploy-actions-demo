@@ -8,7 +8,6 @@ metadata:
   annotations:
     github.ref: refs/pull/13/merge
     github.sha: 83cd753de8b08845f710e59db966a410ed4bcba0
-    github.action: git-push-services-from-prebuilt
 spec:
   project: monorepo-deploy-actions-demo
   source:
