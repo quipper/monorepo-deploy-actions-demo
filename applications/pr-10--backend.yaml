@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pr-10--backend
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    github.ref: refs/pull/10/merge
+    github.sha: 6c038125d10dff69543e36b143d143ef24e9d070
+    github.action: git-push-services-from-prebuilt
+spec:
+  project: monorepo-deploy-actions-demo
+  source:
+    repoURL: https://github.com/quipper/monorepo-deploy-actions-demo.git
+    targetRevision: ns/monorepo-deploy-actions-demo/pr/pr-10
+    path: services/backend
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: pr-10
+  syncPolicy:
+    automated:
+      prune: true
