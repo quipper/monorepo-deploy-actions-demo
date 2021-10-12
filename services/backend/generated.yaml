@@ -1,0 +1,33 @@
+apiVersion: v1
+data:
+  config.yaml: |
+    database.url: postgresql://backend-pr-13/app
+kind: ConfigMap
+metadata:
+  name: backend-9bfbtcfkh4
+  namespace: pr-13
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: pr-13
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - image: ghcr.io/quipper/monorepo-deploy-actions-demo/backend@sha256:df99159c1e2a0e795e37f3f96b889f97dc3f4038f6a7238d1126560d11be3938
+        volumeMounts:
+        - mountPath: /app/config
+          name: config
+      volumes:
+      - configMap:
+          name: backend-9bfbtcfkh4
+        name: config
