@@ -24,15 +24,12 @@ jobs:
         with:
           files: prebuilt/services/**/*.yaml
           variables: NAMESPACE=${{ steps.config.outputs.namespace }}
-      - uses: quipper/monorepo-deploy-actions/git-push-service@v1
+      - uses: quipper/monorepo-deploy-actions/git-push-services-from-prebuilt@v1
         with:
-          manifests: prebuilt/services/**/*.yaml
-          manifests-pattern: ${{ github.workspace }}/prebuilt/services/${service}/**
+          prebuilt-directory: prebuilt
           overlay: pr
           namespace: ${{ steps.config.outputs.namespace }}
           destination-repository: ${{ github.repository }}
-          overwrite: false # use prebuilt manifests only if not yet deployed
-          transient: true
 
       # push namespace Application resource
       - uses: quipper/monorepo-deploy-actions/git-push-namespace@v1
