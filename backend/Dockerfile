@@ -1,1 +1,1 @@
-FROM scratch:latest
+FROM scratch
