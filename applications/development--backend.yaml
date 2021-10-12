@@ -5,6 +5,9 @@ metadata:
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
+  annotations:
+    github.ref: refs/heads/main
+    github.sha: 73b2ff9269690e39695332f536dc935ce491cf5c
 spec:
   project: monorepo-deploy-actions-demo
   source:
