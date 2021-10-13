@@ -1,0 +1,68 @@
+name: frontend--deploy
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/frontend--deploy.yaml
+      - frontend/**
+  push:
+    paths:
+      - .github/workflows/frontend--deploy.yaml
+      - frontend/**
+    branches:
+      - main
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      image: ${{ steps.build.outputs.image }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/docker-build-push
+        id: build
+        with:
+          microservice: frontend
+          context: frontend
+
+  config:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.config.outputs.environments }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/deploy-config
+        id: config
+
+  manifest:
+    needs:
+      - docker
+      - config
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJSON(needs.config.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: int128/kustomize-action@v1
+        id: kustomize
+        with:
+          kustomization: frontend/kubernetes/overlays/${{ matrix.config.overlay }}/kustomization.yaml
+      - uses: quipper/monorepo-deploy-actions/substitute@v1
+        with:
+          files: ${{ steps.kustomize.outputs.directory }}/**/*.yaml
+          variables: |
+            NAMESPACE=${{ matrix.config.namespace }}
+            DOCKER_IMAGE=${{ needs.docker.outputs.image }}
+      - uses: quipper/monorepo-deploy-actions/git-push-service@v1
+        with:
+          manifests: ${{ steps.kustomize.outputs.directory }}/**/*.yaml
+          overlay: ${{ matrix.config.overlay }}
+          namespace: ${{ matrix.config.namespace }}
+          service: frontend
+          destination-repository: ${{ github.repository }}
+          prebuilt: ${{ matrix.config.prebuilt == true }}
