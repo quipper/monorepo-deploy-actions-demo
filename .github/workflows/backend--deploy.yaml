@@ -13,47 +13,33 @@ on:
       - main
 
 jobs:
-  docker:
+  push:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    outputs:
-      image: ${{ steps.build.outputs.image }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/docker-build-push
-        id: build
-        with:
-          microservice: backend
-          context: backend
-
-  config:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    outputs:
-      matrix: ${{ steps.config.outputs.environments }}
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/deploy-config
         id: config
 
-  manifest:
-    needs:
-      - docker
-      - config
-    strategy:
-      fail-fast: false
-      matrix:
-        config: ${{ fromJSON(needs.config.outputs.matrix) }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/manifest-build-push
+      - uses: ./.github/actions/docker-build-push
+        id: docker
         with:
-          kustomization: backend/kubernetes/overlays/${{ matrix.config.overlay }}/kustomization.yaml
-          overlay: ${{ matrix.config.overlay }}
-          namespace: ${{ matrix.config.namespace }}
+          microservice: backend
+          context: backend
+
+      - uses: ./.github/actions/build-push-manifest
+        with:
+          kustomize-overlays: backend/kubernetes/overlays
+          overlay: ${{ steps.config.outputs.overlay }}
+          namespace: ${{ steps.config.outputs.namespace }}
           service: backend
-          prebuilt: ${{ matrix.config.prebuilt }}
           substitute: |
-            DOCKER_IMAGE=${{ needs.docker.outputs.image }}
+            DOCKER_IMAGE=${{ steps.docker.outputs.image }}
+
+      - if: github.ref == 'refs/heads/main'
+        uses: ./.github/actions/build-push-prebuilt-manifest
+        with:
+          kustomize-overlays: backend/kubernetes/overlays
+          service: backend
+          substitute: |
+            DOCKER_IMAGE=${{ steps.docker.outputs.image }}

@@ -1,22 +1,13 @@
-name: manifest-build-push
-description: build and push a manifest
+name: build-push-prebuilt-manifest
+description: build and push a prebuilt manifest
 
 inputs:
-  kustomization:
+  kustomize-overlays:
     required: true
-    description: path to kustomization.yaml
-  overlay:
-    required: true
-    description: overlay to deploy
-  namespace:
-    required: true
-    description: namespace to deploy
+    description: path to overlays
   service:
     required: true
     description: name of microservice
-  prebuilt:
-    required: false
-    description: set true to deploy prebuilt manifests
   substitute:
     required: false
     description: additional variables to substitute
@@ -27,18 +18,16 @@ runs:
     - uses: int128/kustomize-action@v1
       id: kustomize
       with:
-        kustomization: ${{ inputs.kustomization }}
+        kustomization: ${{ inputs.kustomize-overlays }}/${{ inputs.overlay }}/kustomization.yaml
     - uses: quipper/monorepo-deploy-actions/substitute@v1
       with:
         files: ${{ steps.kustomize.outputs.files }}
-        variables: |
-          NAMESPACE=${{ inputs.namespace }}
-          ${{ inputs.substitute }}
+        variables: ${{ inputs.substitute }}
     - uses: quipper/monorepo-deploy-actions/git-push-service@v1
       with:
         manifests: ${{ steps.kustomize.outputs.files }}
-        overlay: ${{ inputs.overlay }}
-        namespace: ${{ inputs.namespace }}
+        overlay: pr
+        namespace: prebuilt
         service: ${{ inputs.service }}
         destination-repository: ${{ github.repository }}
-        prebuilt: ${{ inputs.prebuilt == true }}
+        prebuilt: true
