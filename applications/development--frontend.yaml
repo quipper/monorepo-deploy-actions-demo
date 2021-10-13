@@ -7,7 +7,7 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   annotations:
     github.ref: refs/heads/main
-    github.sha: 1b91592074ab40a807b0caef9af5c83362513f09
+    github.sha: 296d5c24b6d823433349b55e93f7ae2b1066ea80
     github.action: git-push-service
 spec:
   project: monorepo-deploy-actions-demo
