@@ -33,6 +33,7 @@ runs:
         files: ${{ steps.kustomize.outputs.files }}
         variables: |
           NAMESPACE=${{ inputs.namespace }}
+          ${{ inputs.substitute }}
     - uses: quipper/monorepo-deploy-actions/git-push-service@v1
       with:
         manifests: ${{ steps.kustomize.outputs.files }}
