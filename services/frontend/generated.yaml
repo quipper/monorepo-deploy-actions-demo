@@ -1,24 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: frontend
   namespace: pr-15
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: frontend
   template:
     metadata:
       labels:
-        app: backend
+        app: frontend
     spec:
       containers:
-      - image: ghcr.io/quipper/monorepo-deploy-actions-demo/frontend@sha256:7437630e5061153540c5697619d94cb3956bc1f3d6bc7364cb7ee10fa59a371e
-        volumeMounts:
-        - mountPath: /app/config
-          name: config
-      volumes:
-      - configMap:
-          name: backend
-        name: config
+      - image: ghcr.io/quipper/monorepo-deploy-actions-demo/frontend@sha256:08c7e77c13840bc4c360ce65af8d730b12f0c1bf29630799f4b6f41a91254892
