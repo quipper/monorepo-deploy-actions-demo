@@ -18,7 +18,7 @@ jobs:
       # push services using prebuilt manifests
       - uses: actions/checkout@v2
         with:
-          ref: ns/monorepo-deploy-actions-demo/pr/prebuilt/refs/heads/main
+          ref: prebuilt/monorepo-deploy-actions-demo/pr/refs/heads/main
           path: prebuilt
       - uses: quipper/monorepo-deploy-actions/substitute@v1
         with:
