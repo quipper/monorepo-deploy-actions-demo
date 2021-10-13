@@ -5,6 +5,10 @@ inputs:
   kustomize-overlays:
     required: true
     description: path to overlays
+  overlay:
+    required: true
+    description: overlay to build
+    default: pr
   service:
     required: true
     description: name of microservice
@@ -26,7 +30,7 @@ runs:
     - uses: quipper/monorepo-deploy-actions/git-push-service@v1
       with:
         manifests: ${{ steps.kustomize.outputs.files }}
-        overlay: pr
+        overlay: ${{ inputs.overlay }}
         namespace: prebuilt
         service: ${{ inputs.service }}
         destination-repository: ${{ github.repository }}
