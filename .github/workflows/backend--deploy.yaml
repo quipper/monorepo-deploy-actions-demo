@@ -12,9 +12,6 @@ on:
     branches:
       - main
 
-env:
-  microservice: backend
-
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -66,6 +63,6 @@ jobs:
           manifests: ${{ steps.kustomize.outputs.directory }}/**/*.yaml
           overlay: ${{ matrix.config.overlay }}
           namespace: ${{ matrix.config.namespace }}
-          service: ${{ env.microservice }}
+          service: backend
           destination-repository: ${{ github.repository }}
           prebuilt: ${{ matrix.config.prebuilt == true }}
