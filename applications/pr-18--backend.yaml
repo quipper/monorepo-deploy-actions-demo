@@ -7,7 +7,7 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   annotations:
     github.ref: refs/pull/18/merge
-    github.sha: 93a35dd8b922da1da8f953bce95e686de874f79d
+    github.sha: 68c7a362704ac57bd719500814e18c47ecf13432
     github.action: git-push-services-from-prebuilt
 spec:
   project: monorepo-deploy-actions-demo
