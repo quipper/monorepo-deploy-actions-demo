@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pr-17--frontend
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    github.ref: refs/pull/17/merge
+    github.sha: b5a19064584e41f83fc5a7ff165ba84dbbdc1ee3
+    github.action: git-push-services-from-prebuilt
+spec:
+  project: monorepo-deploy-actions-demo
+  source:
+    repoURL: https://github.com/quipper/monorepo-deploy-actions-demo.git
+    targetRevision: ns/monorepo-deploy-actions-demo/pr/pr-17
+    path: services/frontend
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: pr-17
+  syncPolicy:
+    automated:
+      prune: true
