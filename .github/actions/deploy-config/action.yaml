@@ -1,10 +1,13 @@
-name: config
+name: deploy-config
 description: determine the parameters for build and deploy
 
 outputs:
-  environments:
-    description: an array of environments in JSON
-    value: ${{ steps.run.outputs.environments }}
+  overlay:
+    description: overlay to build from
+    value: ${{ steps.run.outputs.overlay }}
+  namespace:
+    description: namespace to deploy to
+    value: ${{ steps.run.outputs.namespace }}
 
 runs:
   using: composite
