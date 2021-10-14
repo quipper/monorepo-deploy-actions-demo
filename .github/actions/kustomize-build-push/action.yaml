@@ -14,9 +14,6 @@ inputs:
   service:
     required: true
     description: name of microservice
-  prebuilt:
-    required: false
-    description: set true to deploy prebuilt manifests
   substitute:
     required: false
     description: additional variables to substitute
