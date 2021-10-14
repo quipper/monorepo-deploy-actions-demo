@@ -27,7 +27,7 @@ jobs:
           microservice: backend
           context: backend
 
-      - uses: ./.github/actions/build-push-manifest
+      - uses: ./.github/actions/kustomize-build-push
         with:
           kustomize-overlays: backend/kubernetes/overlays
           overlay: ${{ steps.config.outputs.overlay }}
@@ -37,7 +37,7 @@ jobs:
             DOCKER_IMAGE=${{ steps.docker.outputs.image }}
 
       - if: github.ref == 'refs/heads/main'
-        uses: ./.github/actions/build-push-prebuilt-manifest
+        uses: ./.github/actions/kustomize-build-push-prebuilt
         with:
           kustomize-overlays: backend/kubernetes/overlays
           service: backend
