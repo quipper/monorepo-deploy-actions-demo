@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: pr-21
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - image: ghcr.io/quipper/monorepo-deploy-actions-demo/frontend@sha256:2a5895d27414b6a017f1a3419993c277806a48fbc61f4d14183c11939dda813c
