@@ -23,7 +23,7 @@ spec:
         app: backend
     spec:
       containers:
-      - image: ghcr.io/quipper/monorepo-deploy-actions-demo/backend@sha256:cbbd4bcb3620c1ba0d741ae5d727a2b75943a475b9a482ded8ae4f4109fc6fd3
+      - image: ghcr.io/quipper/monorepo-deploy-actions-demo/backend@sha256:1716945f42d181821d99165345b0d4ba2a15dea7e13ac962a3128834eee93927
         volumeMounts:
         - mountPath: /app/config
           name: config
